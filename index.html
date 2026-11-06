@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FamilyCare – Family Care Coordination System</title>
+    <meta name="description" content="A comprehensive, responsive healthcare coordination dashboard for managing care recipients, daily tasks, medication tracking, appointments, interactive family calendar, messages, emergency contacts, and care reports." />
+    <meta property="og:title" content="FamilyCare – Family Care Coordination System" />
+    <meta property="og:description" content="Coordinate the care of elderly relatives, sick family members, or individuals needing daily assistance." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Application Custom Styles -->
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <!-- ====================================================================
+         Authentication Screen (Sign In & Sign Up)
+         ==================================================================== -->
+    <div id="auth-screen" class="auth-screen-wrapper" style="display: none;">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-logo">
+            <i class="fa-solid fa-heart-pulse"></i>
+          </div>
+          <h2 class="auth-title">Family<span>Care</span></h2>
+          <p class="auth-subtitle">Family Care Coordination System</p>
+        </div>
+
+        <!-- Auth Tabs: Sign In vs Sign Up -->
+        <div class="auth-tabs">
+          <button id="auth-tab-signin" class="auth-tab-btn active" onclick="window.FamilyCareApp.setAuthTab('signin')">
+            Sign In
+          </button>
+          <button id="auth-tab-signup" class="auth-tab-btn" onclick="window.FamilyCareApp.setAuthTab('signup')">
+            Create Account
+          </button>
+        </div>
+
+        <!-- Error Alert -->
+        <div id="auth-alert" class="auth-alert"></div>
+
+        <!-- Sign In Form -->
+        <form id="form-signin" onsubmit="window.FamilyCareApp.handleSignIn(event)">
+          <div class="form-group">
+            <label class="form-label" for="signin-email">Email Address <span class="required">*</span></label>
+            <input type="email" id="signin-email" class="form-control" placeholder="name@example.com" value="sarah@example.com" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signin-password">Password <span class="required">*</span></label>
+            <input type="password" id="signin-password" class="form-control" placeholder="••••••••" value="password123" required autocomplete="current-password" />
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-size: 0.78rem;">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--text-secondary);">
+              <input type="checkbox" id="signin-remember" checked />
+              <span>Remember me</span>
+            </label>
+            <a href="javascript:void(0)" onclick="window.FamilyCareApp.quickDemoSignIn()" style="color: var(--primary); font-weight: 600;">
+              Use Demo Account
+            </a>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 0.95rem; border-radius: var(--radius-md);">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In to FamilyCare
+          </button>
+
+          <div class="auth-footer">
+            Don't have an account yet? <a href="javascript:void(0)" onclick="window.FamilyCareApp.setAuthTab('signup')">Create an account</a>
+          </div>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="form-signup" onsubmit="window.FamilyCareApp.handleSignUp(event)" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="signup-name">Full Name <span class="required">*</span></label>
+            <input type="text" id="signup-name" class="form-control" placeholder="e.g. Sarah Miller" required autocomplete="name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Email Address <span class="required">*</span></label>
+            <input type="email" id="signup-email" class="form-control" placeholder="e.g. sarah@example.com" required autocomplete="email" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="signup-password">Password <span class="required">*</span></label>
+              <input type="password" id="signup-password" class="form-control" placeholder="At least 6 characters" required autocomplete="new-password" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="signup-confirm-password">Confirm Password <span class="required">*</span></label>
+              <input type="password" id="signup-confirm-password" class="form-control" placeholder="Repeat password" required autocomplete="new-password" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="signup-role">Caregiving Role</label>
+              <select id="signup-role" class="form-control">
+                <option value="Primary Caregiver">Primary Caregiver</option>
+                <option value="Daughter / Son">Daughter / Son</option>
+                <option value="Spouse / Partner">Spouse / Partner</option>
+                <option value="Sibling">Sibling</option>
+                <option value="Grandchild">Grandchild</option>
+                <option value="Nurse / Professional Aide">Nurse / Professional Aide</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="signup-phone">Phone Number</label>
+              <input type="tel" id="signup-phone" class="form-control" placeholder="(555) 000-0000" autocomplete="tel" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 0.95rem; border-radius: var(--radius-md); margin-top: 10px;">
+            <i class="fa-solid fa-user-plus"></i> Create FamilyCare Account
+          </button>
+
+          <div class="auth-footer">
+            Already have an account? <a href="javascript:void(0)" onclick="window.FamilyCareApp.setAuthTab('signin')">Sign In</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Mobile Sidebar Overlay Backdrop -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+    <!-- ====================================================================
+         Main Layout
+         ==================================================================== -->
+    <div id="app-container" class="app-container">
+      <!-- Left Sidebar Navigation -->
+      <aside id="app-sidebar" class="app-sidebar">
+        <!-- Brand Header -->
+        <div class="sidebar-header">
+          <div class="brand-lockup">
+            <div class="brand-icon">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div class="brand-title">Family<span>Care</span></div>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="sidebar-nav">
+          <div class="nav-section-title">Main Coordination</div>
+
+          <a href="#dashboard" class="nav-item active" data-section="dashboard">
+            <i class="fa-solid fa-gauge-high"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <a href="#recipients" class="nav-item" data-section="recipients">
+            <i class="fa-solid fa-users"></i>
+            <span>Care Recipients</span>
+          </a>
+
+          <a href="#tasks" class="nav-item" data-section="tasks">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Tasks & Duties</span>
+          </a>
+
+          <a href="#medications" class="nav-item" data-section="medications">
+            <i class="fa-solid fa-pills"></i>
+            <span>Medication Tracker</span>
+          </a>
+
+          <a href="#appointments" class="nav-item" data-section="appointments">
+            <i class="fa-solid fa-user-doctor"></i>
+            <span>Appointments</span>
+          </a>
+
+          <a href="#calendar" class="nav-item" data-section="calendar">
+            <i class="fa-regular fa-calendar-days"></i>
+            <span>Family Calendar</span>
+          </a>
+
+          <div class="nav-section-title">Communication & Insights</div>
+
+          <a href="#messages" class="nav-item" data-section="messages">
+            <i class="fa-regular fa-comments"></i>
+            <span>Family Messages</span>
+            <span class="nav-badge">Chat</span>
+          </a>
+
+          <a href="#reports" class="nav-item" data-section="reports">
+            <i class="fa-solid fa-chart-pie"></i>
+            <span>Care Reports</span>
+          </a>
+
+          <a href="#emergency" class="nav-item" data-section="emergency" style="color: var(--danger);">
+            <i class="fa-solid fa-phone-volume" style="color: var(--danger);"></i>
+            <span>Emergency Contacts</span>
+          </a>
+
+          <div class="nav-section-title">Account & Security</div>
+
+          <a href="#settings" class="nav-item" data-section="settings">
+            <i class="fa-solid fa-gear"></i>
+            <span>Settings</span>
+          </a>
+
+          <a href="javascript:void(0)" class="nav-item" onclick="window.FamilyCareApp.signOut()" style="color: var(--text-muted);">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>Sign Out</span>
+          </a>
+        </nav>
+
+        <!-- Sidebar User Footer -->
+        <div class="sidebar-footer">
+          <div class="sidebar-user">
+            <img
+              src="https://ui-avatars.com/api/?name=Sarah+Miller&background=2563EB&color=fff"
+              alt="User Avatar"
+              class="sidebar-user-avatar user-display-avatar"
+            />
+            <div class="sidebar-user-info">
+              <span class="sidebar-user-name user-display-name">Caregiver</span>
+              <span class="sidebar-user-role user-display-role">Primary Caregiver</span>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-icon btn-sm" onclick="window.FamilyCareApp.navigateTo('settings')" title="Account Settings">
+            <i class="fa-solid fa-sliders"></i>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <div class="app-main">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+          <div class="header-left">
+            <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open Sidebar Menu">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="page-title-box">
+              <h1 id="page-title-text" class="page-title">Care Overview</h1>
+              <div class="page-breadcrumb">
+                <span>FamilyCare</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 0.6rem;"></i>
+                <span id="page-breadcrumb-text">Dashboard</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Header Global Search -->
+          <div class="header-center">
+            <div class="search-bar-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input
+                type="text"
+                id="global-search-input"
+                class="search-input"
+                placeholder="Search care tasks, recipients, prescriptions..."
+                aria-label="Global search input"
+              />
+            </div>
+          </div>
+
+          <!-- Header Right Utilities & Profile -->
+          <div class="header-right">
+            <!-- Quick Emergency Call -->
+            <a href="tel:911" class="header-btn emergency-btn" title="Emergency Services (911)">
+              <i class="fa-solid fa-phone-volume"></i>
+              <span>Emergency</span>
+            </a>
+
+            <!-- Theme Toggle -->
+            <button class="header-btn" onclick="window.FamilyCareApp.toggleTheme()" title="Toggle Dark/Light Mode">
+              <i id="theme-toggle-icon" class="fa-solid fa-moon"></i>
+            </button>
+
+            <!-- Notifications Dropdown Trigger -->
+            <div style="position: relative;">
+              <button class="header-btn" onclick="window.FamilyCareApp.toggleNotifications()" title="Notifications">
+                <i class="fa-regular fa-bell"></i>
+                <span id="notif-badge-counter" class="badge-counter" style="display: none;">0</span>
+              </button>
+
+              <div id="notifications-dropdown" class="dropdown-menu">
+                <div class="dropdown-header">
+                  <h4>Care Alerts</h4>
+                  <button class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 2px 8px;" onclick="window.FamilyCareApp.markNotificationsAsRead()">
+                    Mark all read
+                  </button>
+                </div>
+                <div id="notifications-dropdown-list" class="dropdown-list">
+                  <!-- Injected via JavaScript -->
+                </div>
+                <div class="dropdown-footer" onclick="window.FamilyCareApp.navigateTo('dashboard')">
+                  Go to Today's Care Overview
+                </div>
+              </div>
+            </div>
+
+            <!-- Profile Dropdown Trigger -->
+            <div style="position: relative;">
+              <div class="profile-pill" onclick="window.FamilyCareApp.toggleProfileMenu()">
+                <img
+                  src="https://ui-avatars.com/api/?name=Sarah+Miller&background=2563EB&color=fff"
+                  alt="User Avatar"
+                  class="profile-pill-avatar user-display-avatar"
+                />
+                <div class="profile-pill-meta">
+                  <span class="profile-pill-name user-display-name">Caregiver</span>
+                  <span class="profile-pill-role user-display-role">Primary Caregiver</span>
+                </div>
+                <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: var(--text-muted); margin-left: 2px;"></i>
+              </div>
+
+              <div id="profile-dropdown" class="dropdown-menu" style="width: 220px;">
+                <div style="padding: 12px 16px; border-bottom: 1px solid var(--border);">
+                  <div style="font-weight: 700; font-size: 0.86rem;" class="user-display-name">Caregiver</div>
+                  <div style="font-size: 0.74rem; color: var(--text-muted);" class="user-display-email">user@example.com</div>
+                </div>
+                <div style="padding: 6px 0;">
+                  <div class="dropdown-item" onclick="window.FamilyCareApp.navigateTo('settings')">
+                    <i class="fa-regular fa-user"></i> <span>My Profile & Settings</span>
+                  </div>
+                  <div class="dropdown-item" onclick="window.FamilyCareApp.navigateTo('messages')">
+                    <i class="fa-regular fa-comments"></i> <span>Caregiver Team Chat</span>
+                  </div>
+                  <div class="dropdown-item" onclick="window.FamilyCareApp.navigateTo('reports')">
+                    <i class="fa-solid fa-chart-pie"></i> <span>Download Care Reports</span>
+                  </div>
+                  <div class="dropdown-item" onclick="window.FamilyCareApp.signOut()" style="color: var(--danger); border-top: 1px solid var(--border-light); margin-top: 4px; padding-top: 8px;">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Sign Out</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Dynamic View Container -->
+        <main class="viewport-content">
+          <section id="dashboard-view" class="view-section active"></section>
+          <section id="recipients-view" class="view-section"></section>
+          <section id="tasks-view" class="view-section"></section>
+          <section id="medications-view" class="view-section"></section>
+          <section id="appointments-view" class="view-section"></section>
+          <section id="calendar-view" class="view-section"></section>
+          <section id="messages-view" class="view-section"></section>
+          <section id="reports-view" class="view-section"></section>
+          <section id="emergency-view" class="view-section"></section>
+          <section id="settings-view" class="view-section"></section>
+        </main>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         Modal Dialogs
+         ==================================================================== -->
+
+    <!-- Modal: Add / Edit Task -->
+    <div id="modal-add-task" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="task-modal-title" class="modal-title">Create Care Task</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-add-task')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="form-add-task" onsubmit="window.FamilyCareApp.saveTaskForm(event)">
+          <div class="modal-body">
+            <input type="hidden" id="task-id-hidden" />
+
+            <div class="form-group">
+              <label class="form-label">Task Title <span class="required">*</span></label>
+              <input type="text" id="task-title-input" class="form-control" placeholder="e.g. Afternoon mobility walk in garden" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Task Description & Instructions</label>
+              <textarea id="task-desc-input" class="form-control" rows="2" placeholder="Specific notes, assistance details, or diet requirements..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Care Recipient <span class="required">*</span></label>
+                <select id="task-recipient-select" class="form-control" required></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Assigned Family Member <span class="required">*</span></label>
+                <select id="task-assignee-select" class="form-control" required></select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Priority Level <span class="required">*</span></label>
+                <select id="task-priority-select" class="form-control" required>
+                  <option value="Urgent">Urgent (Immediate attention)</option>
+                  <option value="High">High Priority</option>
+                  <option value="Medium" selected>Medium Priority</option>
+                  <option value="Low">Low / Flexible</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Due Date <span class="required">*</span></label>
+                <input type="date" id="task-due-date" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Due Time</label>
+              <input type="time" id="task-due-time" class="form-control" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-add-task')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Add / Edit Recipient -->
+    <div id="modal-add-recipient" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="recipient-modal-title" class="modal-title">Add Care Recipient</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-add-recipient')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="form-add-recipient" onsubmit="window.FamilyCareApp.saveRecipientForm(event)">
+          <div class="modal-body">
+            <input type="hidden" id="recipient-id-hidden" />
+
+            <div class="form-group">
+              <label class="form-label">Full Name <span class="required">*</span></label>
+              <input type="text" id="recipient-name-input" class="form-control" placeholder="e.g. Eleanor Vance" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" id="recipient-dob-input" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Age <span class="required">*</span></label>
+                <input type="number" id="recipient-age-input" class="form-control" placeholder="78" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select id="recipient-gender-select" class="form-control">
+                  <option value="Female">Female</option>
+                  <option value="Male">Male</option>
+                  <option value="Other">Other / Decline</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="recipient-phone-input" class="form-control" placeholder="(555) 000-0000" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Room / Residential Location</label>
+              <input type="text" id="recipient-room-input" class="form-control" placeholder="e.g. Main Floor Master Suite" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Emergency Contact Name & Phone</label>
+              <input type="text" id="recipient-emg-input" class="form-control" placeholder="e.g. Sarah Miller · Daughter ((555) 234-5678)" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Known Allergies (Comma separated)</label>
+              <input type="text" id="recipient-allergies-input" class="form-control" placeholder="e.g. Penicillin, Sulfa drugs, Latex" />
+              <div class="form-hint">Highlight critical medication, food, or skin allergies.</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Relevant Medical Conditions (Comma separated)</label>
+              <input type="text" id="recipient-conditions-input" class="form-control" placeholder="e.g. Hypertension, Osteoporosis, Post-Stroke Rehab" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mobility Requirements</label>
+              <input type="text" id="recipient-mobility-input" class="form-control" placeholder="e.g. Walker indoors, wheelchair for outdoors, needs arm assist on stairs" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Care Preferences & Routines</label>
+              <textarea id="recipient-pref-input" class="form-control" rows="2" placeholder="e.g. Morning patio walk, chamomile tea with lunch, quiet naps 2-3 PM"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Additional Clinical Notes</label>
+              <textarea id="recipient-notes-input" class="form-control" rows="2" placeholder="e.g. Pacemaker implanted 2021. Check BP twice daily."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-add-recipient')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Recipient</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: View Recipient Details -->
+    <div id="modal-view-recipient" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">Care Recipient Full Profile</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-view-recipient')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div id="view-recipient-modal-body" class="modal-body">
+          <!-- Injected via JavaScript -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="window.FamilyCareApp.closeModal('modal-view-recipient')">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Add / Edit Medication -->
+    <div id="modal-add-med" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="med-modal-title" class="modal-title">Add Medication</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-add-med')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="form-add-med" onsubmit="window.FamilyCareApp.saveMedForm(event)">
+          <div class="modal-body">
+            <input type="hidden" id="med-id-hidden" />
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Medication Name <span class="required">*</span></label>
+                <input type="text" id="med-name-input" class="form-control" placeholder="e.g. Lisinopril" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Dosage <span class="required">*</span></label>
+                <input type="text" id="med-dosage-input" class="form-control" placeholder="e.g. 10 mg tablet" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Care Recipient <span class="required">*</span></label>
+                <select id="med-recipient-select" class="form-control" required></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Assigned Caregiver</label>
+                <select id="med-caregiver-select" class="form-control"></select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Schedule Slot <span class="required">*</span></label>
+                <select id="med-timeslot-select" class="form-control" required>
+                  <option value="Morning">Morning</option>
+                  <option value="Afternoon">Afternoon</option>
+                  <option value="Evening">Evening</option>
+                  <option value="Bedtime">Bedtime</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Administration Time <span class="required">*</span></label>
+                <input type="time" id="med-sched-time" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Frequency <span class="required">*</span></label>
+              <input type="text" id="med-frequency-input" class="form-control" placeholder="e.g. Once Daily, Twice Daily, Every Wednesday" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Physician Administration Instructions</label>
+              <textarea id="med-instructions-input" class="form-control" rows="2" placeholder="e.g. Take with food, drink 250ml water, do not crush..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-add-med')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Medication</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Log Dose Administration -->
+    <div id="modal-log-dose" class="modal-backdrop">
+      <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+          <h3 class="modal-title">Record Dose Administration</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-log-dose')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form onsubmit="window.FamilyCareApp.saveDoseLogForm(event)">
+          <div class="modal-body">
+            <input type="hidden" id="log-med-id" />
+
+            <div style="background-color: var(--primary-light); padding: 14px; border-radius: var(--radius-md); margin-bottom: 16px;">
+              <div id="log-med-name-display" style="font-weight: 700; font-size: 1rem; color: var(--primary);"></div>
+              <div id="log-recipient-display" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Administration Outcome <span class="required">*</span></label>
+              <select id="log-status-select" class="form-control" required>
+                <option value="Administered">Administered (Taken successfully on time)</option>
+                <option value="Missed">Missed (Dose skipped or forgotten)</option>
+                <option value="Declined">Declined (Patient refused dose)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Notes & Observations (e.g. Blood pressure, glucose, symptoms)</label>
+              <textarea id="log-notes-input" class="form-control" rows="2" placeholder="e.g. BP before dose: 126/80. Taken with breakfast."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-log-dose')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Submit Record</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Add / Edit Appointment -->
+    <div id="modal-add-appointment" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="appt-modal-title" class="modal-title">Schedule Doctor Appointment</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-add-appointment')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="form-add-appointment" onsubmit="window.FamilyCareApp.saveAppointmentForm(event)">
+          <div class="modal-body">
+            <input type="hidden" id="appt-id-hidden" />
+
+            <div class="form-group">
+              <label class="form-label">Appointment Reason / Title <span class="required">*</span></label>
+              <input type="text" id="appt-title-input" class="form-control" placeholder="e.g. Cardiology Pacemaker Review" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Healthcare Provider Name <span class="required">*</span></label>
+                <input type="text" id="appt-provider-input" class="form-control" placeholder="e.g. Dr. Aris Thorne, MD" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Medical Specialty</label>
+                <input type="text" id="appt-specialty-input" class="form-control" placeholder="e.g. Cardiology, Physical Therapy, Ophthalmology" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Care Recipient <span class="required">*</span></label>
+                <select id="appt-recipient-select" class="form-control" required></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Accompanying Family Member <span class="required">*</span></label>
+                <select id="appt-companion-select" class="form-control" required></select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Appointment Date <span class="required">*</span></label>
+                <input type="date" id="appt-date-input" class="form-control" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Appointment Time <span class="required">*</span></label>
+                <input type="time" id="appt-time-input" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Clinic Location / Room <span class="required">*</span></label>
+              <input type="text" id="appt-location-input" class="form-control" placeholder="e.g. Memorial Heart Pavilion, Suite 305" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Preparation & Consultation Notes</label>
+              <textarea id="appt-notes-input" class="form-control" rows="2" placeholder="e.g. Fasting required after midnight, bring medication list..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-add-appointment')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Appointment</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Add Calendar Event -->
+    <div id="modal-add-calendar-event" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title">Add Family Calendar Event</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-add-calendar-event')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="form-add-calendar-event" onsubmit="window.FamilyCareApp.saveCalendarEventForm(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Event Title <span class="required">*</span></label>
+              <input type="text" id="cal-event-title" class="form-control" placeholder="e.g. Family Sunday Dinner & Care Planning" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <select id="cal-event-category" class="form-control">
+                  <option value="visit">Family Visit / Check-in</option>
+                  <option value="shift">Caregiver Shift</option>
+                  <option value="appointment">Medical Appointment</option>
+                  <option value="medication">Medication Routine</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Event Date <span class="required">*</span></label>
+                <input type="date" id="cal-event-date" class="form-control" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Time</label>
+                <input type="time" id="cal-event-time" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Participant / Recipient</label>
+                <input type="text" id="cal-event-recipient" class="form-control" placeholder="e.g. All Family or Mother" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Lead Caregiver</label>
+              <input type="text" id="cal-event-caregiver" class="form-control" placeholder="e.g. Sarah Miller" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Event Details</label>
+              <textarea id="cal-event-details" class="form-control" rows="2" placeholder="Details and coordination plan..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-add-calendar-event')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-calendar-plus"></i> Add Event</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: View Date Events Drilldown -->
+    <div id="modal-view-date-events" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="view-date-events-title" class="modal-title">Day Schedule</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-view-date-events')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div id="view-date-events-body" class="modal-body">
+          <!-- Injected via JavaScript -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-view-date-events')">Close</button>
+          <button type="button" class="btn btn-primary" onclick="window.FamilyCareApp.closeModal('modal-view-date-events'); window.FamilyCareApp.openTaskModal();">
+            <i class="fa-solid fa-plus"></i> Add Task for Day
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Add / Edit Emergency Contact -->
+    <div id="modal-add-emergency" class="modal-backdrop">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 id="emergency-modal-title" class="modal-title">Add Emergency Contact</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-add-emergency')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="form-add-emergency" onsubmit="window.FamilyCareApp.saveEmergencyForm(event)">
+          <div class="modal-body">
+            <input type="hidden" id="emg-id-hidden" />
+
+            <div class="form-group">
+              <label class="form-label">Contact Name / Facility <span class="required">*</span></label>
+              <input type="text" id="emg-name-input" class="form-control" placeholder="e.g. Dr. Michael Chen, MD or Memorial ER" required />
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Relationship / Designation <span class="required">*</span></label>
+                <input type="text" id="emg-rel-input" class="form-control" placeholder="e.g. Primary Physician, Healthcare Proxy, Hospital ER" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number <span class="required">*</span></label>
+                <input type="tel" id="emg-phone-input" class="form-control" placeholder="e.g. (555) 890-1234" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Preferred Hospital / Clinic Address</label>
+              <input type="text" id="emg-hospital-input" class="form-control" placeholder="e.g. Memorial Hospital (1400 Health Blvd)" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Relevant Medical Information</label>
+              <textarea id="emg-mednotes-input" class="form-control" rows="2" placeholder="e.g. Primary doctor on call, clinical history on file..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Important Care & Contact Instructions</label>
+              <textarea id="emg-instr-input" class="form-control" rows="2" placeholder="e.g. Call for medication changes or clinical consultations."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-add-emergency')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Contact</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Add Family Member -->
+    <div id="modal-add-family" class="modal-backdrop">
+      <div class="modal-card" style="max-width: 480px;">
+        <div class="modal-header">
+          <h3 class="modal-title">Add Family Caregiver</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-add-family')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="form-add-family" onsubmit="window.FamilyCareApp.saveFamilyMemberForm(event)">
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">Full Name <span class="required">*</span></label>
+              <input type="text" id="family-member-name" class="form-control" placeholder="e.g. John Miller" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Relationship / Caregiving Role <span class="required">*</span></label>
+              <input type="text" id="family-member-relation" class="form-control" placeholder="e.g. Brother, Son, Nurse" required />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="family-member-email" class="form-control" placeholder="john@example.com" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" id="family-member-phone" class="form-control" placeholder="(555) 345-6789" />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-add-family')">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Add Caregiver</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Confirmation Dialog -->
+    <div id="modal-confirm" class="modal-backdrop">
+      <div class="modal-card" style="max-width: 440px;">
+        <div class="modal-header">
+          <h3 id="confirm-modal-title" class="modal-title" style="color: var(--danger);">Confirm Action</h3>
+          <button class="modal-close-btn" onclick="window.FamilyCareApp.closeModal('modal-confirm')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="confirm-modal-msg" style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="window.FamilyCareApp.closeModal('modal-confirm')">Cancel</button>
+          <button type="button" class="btn btn-danger" onclick="window.FamilyCareApp.confirmAction()">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- Application Script Entry Point -->
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>

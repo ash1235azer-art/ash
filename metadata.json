@@ -1,0 +1,8 @@
+{
+  "name": "FamilyCare – Family Care Coordination System",
+  "description": "A comprehensive, responsive family care coordination dashboard for managing care recipients, daily tasks, medication tracking, appointments, interactive family calendar, messages, emergency contacts, and care reports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
